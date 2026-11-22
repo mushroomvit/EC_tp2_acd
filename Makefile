@@ -1,6 +1,6 @@
 all:
 	mkdir -p bin
-	javac -d bin *.java
+	javac -d bin src/*.java
 	java -cp bin src.Teste
 
 clean:
