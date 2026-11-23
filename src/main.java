@@ -39,7 +39,9 @@ public class main {
                         + ";Bellman-Ford;matriz;1;" + vez + ";" + resultado.nanos());
             }
         }
-        Path saida = Files.createTempFile(Path.of("."), "tempos-", ".csv");
+        Path resultados = (Path.of("resultados"));
+        Files.createDirectories(resultados);
+        Path saida = resultados.resolve("resultados.csv");
         Files.write(saida, linhas);
         System.out.println("Resultados: " + saida.toAbsolutePath().normalize());
     }
