@@ -3,9 +3,10 @@ package algoritmos;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import src.Aresta;
-import src.Grafo;
-import src.TipoGrafo;
+
+import src_grafo.Aresta;
+import src_grafo.Grafo;
+import src_grafo.TipoGrafo;
 
 public class OrdenacaoTopologica {
     private enum Estado { EM_VISITA, CONCLUIDO }
