@@ -4,7 +4,7 @@ base = "../resultados"
 saida = base . "/graficos"
 system(sprintf("mkdir -p '%s'", saida))
 
-set terminal pngcairo size 1500,640 font "Sans,14"
+set terminal pngcairo size 1500,640 font "Arial,19"
 set datafile separator ";"
 set style boxplot range 1.5 outliers
 set style fill solid 0.65 border
@@ -17,7 +17,9 @@ set xlabel "Densidade nominal do grafo"
 set ylabel "Tempo de execucao (ms)"
 
 # Identifica a densidade pelo nome oficial, anterior ao tratamento de arcos repetidos.
+
 sample(n,i) = sprintf("sample%d-%d.gr", n, int(n*(n-1)*i/5))
+
 do for [alg in "BellmanFord Dijkstra"] {
     nome = alg eq "BellmanFord" ? "Bellman-Ford" : "Dijkstra"
     pasta = base . "/resultados" . alg
