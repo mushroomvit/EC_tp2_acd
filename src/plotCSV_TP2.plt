@@ -3,13 +3,7 @@ reset
 
 arquivo = "../resultados/resultados.csv"
 saida   = "../resultados/graficos/"
-
-# Cria a pasta de saida, se necessario.
-if (GPVAL_SYSNAME eq "Windows") {
-    system('if not exist "..\resultados\graficos" mkdir "..\resultados\graficos"')
-} else {
-    system('mkdir -p "../resultados/graficos"')
-}
+system("test -d '". saida . "' || mkdir -- '" . saida . "'")
 
 set terminal pngcairo size 1280,720 font "Arial,16"
 set datafile separator ";"
