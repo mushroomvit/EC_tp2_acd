@@ -3,7 +3,6 @@
 Para compilar e executar o projeto, entre na pasta `src` e execute:
 
 ```bash
-cd src
 make
 ```
 
