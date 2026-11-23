@@ -1,23 +1,8 @@
 package algoritmos;
 
 import java.util.PriorityQueue;
-import java.util.List;
-
-interface Grafo {
-    int getNumVertices();
-
-    List<Aresta> getVizinhos(int u);
-}
-
-class Aresta {
-    int destino;
-    double peso;
-
-    public Aresta(int destino, double peso) {
-        this.destino = destino;
-        this.peso = peso;
-    }
-}
+import src_grafo.Grafo;
+import src_grafo.Aresta;
 
 // classe auxiliar para a fila de prioridade Q
 class NoVertice implements Comparable<NoVertice> {
@@ -42,7 +27,10 @@ public class Dijkstra {
     private int[] pi;
 
     public void executarDijkstra(Grafo grafo, int origem) {
-        int n = grafo.getNumVertices();
+        if (grafo.arestas().stream().anyMatch(a -> a.getPeso() < 0)) {
+            throw new IllegalArgumentException("Dijkstra exige pesos nao negativos.");
+        }
+        int n = grafo.numeroVertices();
         d = new double[n];
         pi = new int[n];
 
@@ -72,9 +60,9 @@ public class Dijkstra {
             S[u] = true;
 
             // relaxa todas as arestas que saem de u
-            for (Aresta aresta : grafo.getVizinhos(u)) {
-                int v = aresta.destino;
-                double pesoUV = aresta.peso;
+            for (Aresta aresta : grafo.adjacentes(u)) {
+                int v = aresta.getU().getId() == u ? aresta.getV().getId() : aresta.getU().getId();
+                double pesoUV = aresta.getPeso();
 
                 if (!S[v] && d[u] + pesoUV < d[v]) {
                     d[v] = d[u] + pesoUV;

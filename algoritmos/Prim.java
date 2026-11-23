@@ -1,6 +1,8 @@
 package algoritmos;
 
 import java.util.PriorityQueue;
+import src_grafo.Grafo;
+import src_grafo.Aresta;
 
 public class Prim {
 
@@ -8,7 +10,7 @@ public class Prim {
     private int[] pi;
 
     public void executarPrim(Grafo grafo, int raiz) {
-        int n = grafo.getNumVertices();
+        int n = grafo.numeroVertices();
         chave = new double[n];
         pi = new int[n];
 
@@ -41,9 +43,9 @@ public class Prim {
             naArvore[u] = true;
 
             // para cada vértice v em G.Adj[u]
-            for (Aresta aresta : grafo.getVizinhos(u)) {
-                int v = aresta.destino;
-                double pesoUV = aresta.peso;
+            for (Aresta aresta : grafo.adjacentes(u)) {
+                int v = aresta.getU().getId() == u ? aresta.getV().getId() : aresta.getU().getId();
+                double pesoUV = aresta.getPeso();
 
                 // se v ∈ Q e w(u, v) < v.chave
                 if (!naArvore[v] && pesoUV < chave[v]) {
