@@ -1,39 +1,39 @@
-# TP2 ACD - Boxplots de Bellman-Ford com matriz de adjacencia
+# Executar a partir de src_grafo: gnuplot plotCSV_TP2.plt
 reset
+base = "../resultados"
+saida = base . "/graficos"
+system(sprintf("mkdir -p '%s'", saida))
 
-arquivo = "../resultados/resultados.csv"
-saida   = "../resultados/graficos/"
-system("test -d '". saida . "' || mkdir -- '" . saida . "'")
-
-set terminal pngcairo size 1280,720 font "Arial,16"
+set terminal pngcairo size 1500,640 font "Sans,14"
 set datafile separator ";"
-set style data boxplot
+set style boxplot range 1.5 outliers
 set style fill solid 0.65 border
 set boxwidth 0.5
 unset key
-
 set grid ytics
+set xrange [0.5:5.5]
+set xtics ("20%%" 1, "40%%" 2, "60%%" 3, "80%%" 4, "100%%" 5)
 set xlabel "Densidade nominal do grafo"
 set ylabel "Tempo de execucao (ms)"
-set xrange [0.5:5.5]
-set yrange [0:*]
-set xtics ("20%%" 1, "40%%" 2, "60%%" 3, "80%%" 4, "100%%" 5)
 
-# Nome do sample para cada tamanho e densidade.
-sample(n, i) = sprintf("sample%d-%d.gr", int(n), int(n*(n-1)*i/5))
-
-do for [v=1:3] {
-    n = (v == 1 ? 100 : v == 2 ? 200 : 500)
-
-    set output sprintf("%sboxplot_Bellman-Ford_matriz_%d.png", saida, n)
-    set title sprintf("Bellman-Ford | Matriz de adjacencia | %d vertices", n)
-
-    plot for [i=1:5] arquivo skip 1 using (i): \
-        (strcol(1) eq sample(n,i) && \
-         strcol(4) eq "Bellman-Ford" && \
-         strcol(5) eq "matriz" && \
-         $6 == 1 ? $8 / 1e6 : 1/0) \
-        with boxplot lc rgb "#3973AC"
-
-    unset output
+# Identifica a densidade pelo nome oficial, anterior ao tratamento de arcos repetidos.
+sample(n,i) = sprintf("sample%d-%d.gr", n, int(n*(n-1)*i/5))
+do for [alg in "BellmanFord Dijkstra"] {
+    nome = alg eq "BellmanFord" ? "Bellman-Ford" : "Dijkstra"
+    pasta = base . "/resultados" . alg
+    do for [rep in "lista matriz"] {
+        arquivo = pasta . "/resultados_" . rep . ".csv"
+        set output sprintf("%s/boxplot_%s_%s.png", saida, nome, rep)
+        set multiplot layout 1,3 title sprintf("%s | %s de adjacencia", nome, rep)
+        do for [t=1:3] {
+            n = t == 1 ? 100 : (t == 2 ? 200 : 500)
+            set title sprintf("%d vertices", n)
+            set yrange [0:*]
+            plot for [i=1:5] arquivo skip 1 using (i): \
+                (strcol(1) eq sample(n,i) && strcol(4) eq nome && strcol(5) eq rep && \
+                 $6 == 1 ? $8 / 1e6 : 1/0) with boxplot lc rgb "#3973AC"
+        }
+        unset multiplot
+        unset output
+    }
 }
