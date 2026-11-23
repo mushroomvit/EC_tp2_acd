@@ -2,8 +2,10 @@ package algoritmos;
 
 import java.util.ArrayList;
 import java.util.List;
-import src.Aresta;
-import src.Grafo;
+
+import src_grafo.Aresta;
+import src_grafo.Grafo;
+
 import java.util.ArrayDeque;
 
 public class BFS {

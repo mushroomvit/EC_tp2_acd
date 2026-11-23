@@ -1,8 +1,9 @@
 package algoritmos;
 
 import java.util.Arrays;
-import src.Aresta;
-import src.Grafo;
+
+import src_grafo.Aresta;
+import src_grafo.Grafo;
 
 public class BellmanFord {
     public static double[] calcular(Grafo grafo, int fonte) {

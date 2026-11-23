@@ -1,17 +1,18 @@
-package src;
+package src_grafo;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MatrizAdjacencia implements Grafo {
+public class ListaAdjacencia implements Grafo {
 
     private final List<Vertice> vertices;
     private final List<Aresta> arestas;
-    private final Aresta[][] matriz;
+    private final List<List<Aresta>> adj;
     private final TipoGrafo tipo;
 
-    public MatrizAdjacencia(int numVertices, TipoGrafo tipo) {
+    // construtor
+    public ListaAdjacencia(int numVertices, TipoGrafo tipo) {
 
         if (tipo == null) {
             throw new IllegalArgumentException("O tipo do grafo não pode ser nulo.");
@@ -27,42 +28,49 @@ public class MatrizAdjacencia implements Grafo {
 
         vertices = new ArrayList<>();
         arestas = new ArrayList<>();
+        adj = new ArrayList<>();
 
-        matriz = new Aresta[numVertices][numVertices];
-
-        // inicializa os vertices
         for (int i = 0; i < numVertices; i++) {
+
             vertices.add(new Vertice(i));
+
+            adj.add(new ArrayList<>());
         }
     }
 
+    // retorna tipo do grafo
     @Override
     public TipoGrafo tipo() {
         return tipo;
     }
 
+    // retorna lista de vertices
     @Override
     public List<Vertice> vertices() {
         return Collections.unmodifiableList(vertices);
     }
 
+    // retorna lista de arestas
     @Override
     public List<Aresta> arestas() {
         return Collections.unmodifiableList(arestas);
     }
 
+    // adiciona aresta com peso
     @Override
     public void adicionarAresta(int u, int v, double peso) {
 
         validarVertice(u);
         validarVertice(v);
 
+        // ve se aresta já existe
         if (obterAresta(u, v) != null) {
             throw new IllegalArgumentException(
                 "Aresta já existente."
             );
         }
 
+        // cria aresta com os vertices que hja existem
         Aresta aresta = new Aresta(
             vertices.get(u),
             vertices.get(v),
@@ -71,10 +79,11 @@ public class MatrizAdjacencia implements Grafo {
 
         arestas.add(aresta);
 
-        matriz[u][v] = aresta;
+        adj.get(u).add(aresta);
 
-        if (tipo == TipoGrafo.NAO_DIRECIONADO) {
-            matriz[v][u] = aresta;
+        // em grafos não direcionados adiciona em v tambem
+        if (tipo == TipoGrafo.NAO_DIRECIONADO && u != v) {
+            adj.get(v).add(aresta);
         }
     }
 
@@ -84,7 +93,22 @@ public class MatrizAdjacencia implements Grafo {
         validarVertice(u);
         validarVertice(v);
 
-        return matriz[u][v];
+        for (Aresta aresta : adj.get(u)) {
+
+            int origem = aresta.getU().getId();
+            int destino = aresta.getV().getId();
+
+            if (origem == u && destino == v) {
+                return aresta;
+            }
+
+            if (tipo == TipoGrafo.NAO_DIRECIONADO
+                    && origem == v && destino == u) {
+                return aresta;
+            }
+        }
+
+        return null;
     }
 
     @Override
@@ -92,16 +116,7 @@ public class MatrizAdjacencia implements Grafo {
 
         validarVertice(u);
 
-        List<Aresta> adjacentes = new ArrayList<>();
-
-        for (int v = 0; v < numeroVertices(); v++) {
-
-            if (matriz[u][v] != null) {
-                adjacentes.add(matriz[u][v]);
-            }
-        }
-
-        return Collections.unmodifiableList(adjacentes);
+        return Collections.unmodifiableList(adj.get(u));
     }
 
     @Override

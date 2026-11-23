@@ -1,4 +1,4 @@
-package src;
+package src_grafo;
 
 import java.io.IOException;
 import java.nio.file.*;
