@@ -1,9 +1,11 @@
 package src_grafo;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.*;
 import java.util.stream.Stream;
+import java.io.IOException;
 
 import algoritmos.BellmanFord;
 import algoritmos.BFS;
@@ -68,6 +70,7 @@ public class main {
         }
         salvarResultados(Path.of("resultados", "resultadosBellmanFord"), representacao, linhasBellmanFord);
         salvarResultados(Path.of("resultados", "resultadosDijkstra"), representacao, linhasDijkstra);
+
     }
 
     static void salvarResultados(Path pasta, String representacao, List<String> linhas) throws IOException {
@@ -75,7 +78,27 @@ public class main {
         Path saida = pasta.resolve("resultados_" + representacao + ".csv");
         Files.write(saida, linhas);
         System.out.println("Resultados: " + saida.toAbsolutePath().normalize());
+
+        try{
+            ProcessBuilder pb = new ProcessBuilder(
+                "gnuplot", "plotCSV_TP2.plt"
+            );
+                    pb.directory(new File("src_grafo"));
+                    pb.inheritIO();
+
+                    Process processo = pb.start();
+                    int codigoSaida = processo.waitFor();
+
+                    if (codigoSaida == 0) {
+                        System.out.println("Graficos gerados com sucesso!");
+                    } else {
+                        System.out.println("Erro ao gerar os graficos.");
+                    }
+            }  catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
     }
+
 
     public static void main(String[] args) throws IOException {
         if (args.length == 2 && args[0].equals("experimento")) {
